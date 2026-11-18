@@ -1,0 +1,453 @@
+---
+// Живая демонстрация: макет рабочего стола Mac, на котором по очереди
+// показываются все 8 функций. Сцены переключаются сами или по клику.
+import Icon from './Icon.astro';
+import Octopus from './Octopus.astro';
+import { dict, type Lang } from '../i18n';
+import { demoDict } from '../demo-i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict[lang];
+const d = demoDict[lang];
+const scenes = ['dock', 'snap', 'max', 'scroll', 'quit', 'trash', 'stats', 'shot'];
+const lines = [92, 78, 85, 60, 88, 70, 95, 52, 80, 74, 90, 66, 84, 58, 92, 76];
+---
+<section id="features" class="demo-sec" aria-labelledby="demo-title">
+  <div class="wrap">
+    <p class="eyebrow">{d.eyebrow}</p>
+    <h2 id="demo-title">{d.title}</h2>
+    <p class="sub">{d.lead}</p>
+
+    <div class="demo" data-demo>
+      <div class="stage" data-stage aria-hidden="true">
+        <!-- строка меню -->
+        <div class="mb">
+          <span class="mb-dot"></span><b>{d.app}</b><span class="mb-dim">File</span><span class="mb-dim">Edit</span><span class="mb-dim">View</span>
+          <span class="mb-right">
+            <span class="mb-stats" data-statbtn>CPU <span data-cpu>12</span>%&nbsp;&nbsp;RAM <span data-ram>54</span>%</span>
+            <span class="mb-octo"><Octopus size={13} /></span>
+            <span class="mb-dim">9:41</span>
+          </span>
+        </div>
+
+        <!-- окно -->
+        <div class="win" data-win>
+          <div class="win-bar">
+            <i class="tl r" data-red></i><i class="tl y"></i><i class="tl g" data-green></i>
+            <span class="win-title">{d.app}</span>
+          </div>
+          <div class="win-body">
+            <div class="win-scroll" data-scroll>
+              <div class="hero-img"></div>
+              {lines.map((w) => <div class="ln" style={`width:${w}%`}></div>)}
+              <div class="hero-img small"></div>
+              {lines.map((w) => <div class="ln" style={`width:${100 - w / 2}%`}></div>)}
+            </div>
+          </div>
+        </div>
+
+        <!-- подсветка прилипания -->
+        <div class="snapzone" data-snapzone></div>
+
+        <!-- панель мониторинга -->
+        <div class="panel" data-panel>
+          <div class="p-row"><span>CPU</span><span class="bar"><i data-bar-cpu></i></span></div>
+          <div class="p-row"><span>RAM</span><span class="bar mem"><i data-bar-ram></i></span></div>
+          <div class="p-row net"><span>↓ <b data-down>2.4</b> MB/s</span><span>↑ <b data-up>310</b> KB/s</span></div>
+          <div class="p-procs"><span>Safari</span><span>18%</span></div>
+          <div class="p-procs"><span>Xcode</span><span>11%</span></div>
+        </div>
+
+        <!-- удаление программы -->
+        <div class="sheet" data-sheet>
+          <b class="sheet-title">{d.remove}</b>
+          <div class="s-row" data-fly><span class="s-ico shop"></span>Shop.app<em>48 MB</em><span class="ck">✓</span></div>
+          <div class="s-row" data-fly><span class="s-ico file"></span>{d.caches}<em>126 MB</em><span class="ck">✓</span></div>
+          <div class="s-row" data-fly><span class="s-ico file"></span>{d.prefs}<em>12 KB</em><span class="ck">✓</span></div>
+          <span class="s-btn" data-trashbtn>{d.trash}</span>
+        </div>
+
+        <!-- скриншот -->
+        <div class="shot-dim" data-dim></div>
+        <div class="shot-sel" data-sel>
+          <svg class="shot-arrow" viewBox="0 0 100 60" preserveAspectRatio="none"><path data-arrow d="M12 48 L 78 14 M 78 14 L 62 14 M 78 14 L 72 29" /></svg>
+          <div class="shot-tools"><i></i><i></i><i class="on"></i><i></i><i></i></div>
+        </div>
+        <div class="pill" data-keys>⌃ ⇧ 1</div>
+        <div class="toast" data-toast>✓ {d.copied}</div>
+
+        <!-- колесо мыши -->
+        <div class="wheel" data-wheel><span class="w-mouse"><i></i></span>{d.mouse}</div>
+
+        <!-- Док -->
+        <div class="dock">
+          <span class="di c1"></span>
+          <span class="di c2 run" data-notes></span>
+          <span class="di c3"></span>
+          <span class="di c4 run" data-shop></span>
+          <span class="di c5"></span>
+          <span class="dsep"></span>
+          <span class="di trash" data-trash><i></i></span>
+        </div>
+
+        <!-- курсор -->
+        <svg class="cur" data-cur viewBox="0 0 24 24"><path d="M5 2.5v16.6l4.3-4.1 2.8 6.4 2.6-1.1-2.8-6.3 5.9-.3z" /></svg>
+      </div>
+
+      <div class="list" role="tablist" aria-label={t.nav.features}>
+        {t.features.items.map((f, i) => (
+          <button type="button" role="tab" class="item" data-item={scenes[i]} aria-selected="false">
+            <span class="ico"><Icon name={f.icon} /></span>
+            <span class="txt"><b>{f.title}</b><span class="desc">{f.text}</span></span>
+            <span class="prog"><i></i></span>
+          </button>
+        ))}
+        <button type="button" class="playpause" data-toggle data-pause={d.pause} data-play={d.play} aria-label={d.pause}>
+          <svg viewBox="0 0 24 24" class="i-pause"><path d="M7 5h3v14H7zM14 5h3v14h-3z" /></svg>
+          <svg viewBox="0 0 24 24" class="i-play"><path d="M8 5v14l11-7z" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  type El = HTMLElement;
+  const root = document.querySelector<El>('[data-demo]');
+  if (root) setup(root);
+
+  function setup(root: El) {
+    const stage = root.querySelector<El>('[data-stage]')!;
+    const q = <T extends Element = El>(s: string) => stage.querySelector<T>(s)! as unknown as T;
+    const win = q('[data-win]'), cur = q('[data-cur]'), scroll = q('[data-scroll]');
+    const snap = q('[data-snapzone]'), panel = q('[data-panel]'), sheet = q('[data-sheet]');
+    const dim = q('[data-dim]'), sel = q('[data-sel]'), keys = q('[data-keys]'), toast = q('[data-toast]');
+    const wheel = q('[data-wheel]'), notes = q('[data-notes]'), shop = q('[data-shop]'), trash = q('[data-trash]');
+    const items = [...root.querySelectorAll<HTMLButtonElement>('[data-item]')];
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]')!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) stage.classList.add('rm');
+
+    const WIN = { l: 16, t: 14, w: 52, h: 56 };
+    const DUR: Record<string, number> = { dock: 4200, snap: 4200, max: 4200, scroll: 4000, quit: 3800, trash: 4800, stats: 4200, shot: 5200 };
+
+    // ——— помощники ———
+    let token = 0;
+    const wait = (ms: number, tk: number) => new Promise<void>((res, rej) =>
+      setTimeout(() => (tk === token ? res() : rej(new Error('cancel'))), reduce ? Math.min(ms, 60) : ms));
+    const box = () => stage.getBoundingClientRect();
+    function pt(el: Element, fx = 0.5, fy = 0.5) {
+      const s = box(), r = el.getBoundingClientRect();
+      return { x: ((r.left - s.left + r.width * fx) / s.width) * 100, y: ((r.top - s.top + r.height * fy) / s.height) * 100 };
+    }
+    function moveCur(x: number, y: number, ms = 700) {
+      cur.style.transitionDuration = `${ms}ms`;
+      cur.style.left = `${x}%`; cur.style.top = `${y}%`;
+    }
+    const cursorTo = (el: Element, fx = 0.5, fy = 0.5, ms = 700) => { const p = pt(el, fx, fy); moveCur(p.x, p.y, ms); };
+    const click = () => { cur.classList.remove('click'); void cur.getBoundingClientRect(); cur.classList.add('click'); };
+    function setWin(f: { l: number; t: number; w: number; h: number }, ms = 450) {
+      win.style.transitionDuration = `${ms}ms`;
+      Object.assign(win.style, { left: `${f.l}%`, top: `${f.t}%`, width: `${f.w}%`, height: `${f.h}%` });
+    }
+    const visible = () => {   // область между строкой меню и Доком
+      const s = box(), dock = stage.querySelector('.dock')!.getBoundingClientRect(), mb = stage.querySelector('.mb')!.getBoundingClientRect();
+      const top = ((mb.bottom - s.top) / s.height) * 100 + 0.8, bottom = ((dock.top - s.top) / s.height) * 100 - 1.2;
+      return { l: 0.8, t: top, w: 98.4, h: bottom - top };
+    };
+    function reset() {
+      stage.classList.add('instant');
+      setWin(WIN, 0);
+      win.style.transform = ''; win.style.opacity = '';
+      scroll.style.transform = '';
+      for (const el of [snap, panel, sheet, dim, sel, keys, toast, wheel]) el.classList.remove('on');
+      sel.classList.remove('tools', 'draw');
+      sheet.querySelectorAll<El>('[data-fly]').forEach((r) => { r.style.transform = ''; r.style.opacity = ''; r.classList.remove('ok'); });
+      notes.classList.add('run'); shop.classList.remove('gone'); trash.classList.remove('full');
+      sel.removeAttribute('style'); win.classList.remove('grab');
+      void stage.offsetWidth;
+      stage.classList.remove('instant');
+    }
+
+    // ——— сцены ———
+    const scenesRun: Record<string, (tk: number) => Promise<void>> = {
+      async dock(tk) {
+        cursorTo(notes, 0.5, 0.45); await wait(800, tk); click();
+        const s = box(), n = notes.getBoundingClientRect(), w = win.getBoundingClientRect();
+        win.style.transformOrigin = `${((n.left + n.width / 2 - w.left) / w.width) * 100}% ${((n.top - w.top) / w.height) * 100}%`;
+        win.style.transform = 'scale(0.04)'; win.style.opacity = '0';
+        await wait(1500, tk); click();
+        win.style.transform = ''; win.style.opacity = '';
+        await wait(1400, tk); void s;
+      },
+      async snap(tk) {
+        cursorTo(win.querySelector('.win-title')!, 0.5, 0.5); await wait(800, tk);
+        win.classList.add('grab');
+        moveCur(97, 30, 900); setWin({ ...WIN, l: 97 - WIN.w / 2 - 1, t: 30 - 2.5 }, 900);
+        await wait(700, tk); snap.classList.add('on');
+        await wait(700, tk);
+        win.classList.remove('grab');
+        const v = visible(); snap.classList.remove('on');
+        setWin({ l: 50.4, t: v.t, w: 48.8, h: v.h }, 380);
+        moveCur(80, 30, 600);
+        await wait(1600, tk);
+      },
+      async max(tk) {
+        cursorTo(q('[data-green]'), 0.5, 0.5); await wait(800, tk); click();
+        setWin(visible(), 520); await wait(1500, tk);
+        cursorTo(q('[data-green]'), 0.5, 0.5, 500); await wait(600, tk); click();
+        setWin(WIN, 520); await wait(1100, tk);
+      },
+      async scroll(tk) {
+        cursorTo(scroll, 0.6, 0.5); await wait(700, tk);
+        wheel.classList.add('on');
+        scroll.style.transitionDuration = '1300ms'; scroll.style.transform = 'translateY(-46%)';
+        await wait(1500, tk);
+        scroll.style.transform = 'translateY(-12%)';
+        await wait(1500, tk); wheel.classList.remove('on');
+      },
+      async quit(tk) {
+        cursorTo(q('[data-red]'), 0.5, 0.5); await wait(800, tk); click();
+        win.style.transform = 'scale(0.92)'; win.style.opacity = '0';
+        await wait(500, tk); notes.classList.remove('run');
+        await wait(2000, tk);
+      },
+      async trash(tk) {
+        win.style.opacity = '0.35';
+        sheet.classList.add('on'); moveCur(60, 70, 600); await wait(700, tk);
+        const rows = [...sheet.querySelectorAll<El>('[data-fly]')];
+        for (const r of rows) { r.classList.add('ok'); await wait(260, tk); }
+        cursorTo(q('[data-trashbtn]'), 0.5, 0.5, 600); await wait(800, tk); click();
+        const tr = trash.getBoundingClientRect();
+        rows.forEach((r, i) => {
+          const rr = r.getBoundingClientRect();
+          r.style.transitionDelay = `${i * 90}ms`;
+          r.style.transform = `translate(${tr.left + tr.width / 2 - (rr.left + rr.width / 2)}px, ${tr.top - rr.top}px) scale(0.12)`;
+          r.style.opacity = '0';
+        });
+        shop.classList.add('gone');
+        await wait(650, tk); trash.classList.add('full'); sheet.classList.remove('on');
+        await wait(1500, tk);
+      },
+      async stats(tk) {
+        cursorTo(q('[data-statbtn]'), 0.5, 0.6); await wait(800, tk); click();
+        panel.classList.add('on'); await wait(2600, tk);
+        panel.classList.remove('on'); await wait(500, tk);
+      },
+      async shot(tk) {
+        keys.classList.add('on'); await wait(700, tk);
+        keys.classList.remove('on'); dim.classList.add('on');
+        moveCur(24, 22, 500); await wait(600, tk);
+        Object.assign(sel.style, { left: '24%', top: '22%', width: '0%', height: '0%' });
+        sel.classList.add('on'); void sel.offsetWidth;
+        sel.style.transitionDuration = '700ms'; moveCur(62, 60, 700);
+        Object.assign(sel.style, { width: '38%', height: '38%' });
+        await wait(900, tk); sel.classList.add('tools');
+        await wait(400, tk); sel.classList.add('draw');
+        await wait(1000, tk); toast.classList.add('on');
+        sel.classList.remove('on', 'tools', 'draw'); dim.classList.remove('on');
+        await wait(1500, tk);
+      },
+    };
+
+    // ——— управление ———
+    let idx = 0, playing = !reduce, inView = true;
+    async function show(i: number, auto: boolean) {
+      const tk = ++token; idx = i;
+      items.forEach((b, j) => {
+        b.setAttribute('aria-selected', String(j === i));
+        b.classList.toggle('active', j === i);
+        b.classList.remove('timing');
+      });
+      const name = items[i].dataset.item!;
+      if (auto && playing) {
+        items[i].style.setProperty('--dur', `${DUR[name]}ms`);
+        void items[i].offsetWidth; items[i].classList.add('timing');
+      }
+      reset();
+      try {
+        await scenesRun[name](tk);
+        if (tk === token && playing && inView) show((i + 1) % items.length, true);
+      } catch { /* сцену прервали */ }
+    }
+    items.forEach((b, i) => b.addEventListener('click', () => { show(i, true); }));
+    function setPlaying(p: boolean) {
+      playing = p;
+      root.classList.toggle('paused', !p);
+      toggle.setAttribute('aria-label', p ? toggle.dataset.pause! : toggle.dataset.play!);
+      if (p) show(idx, true); else items[idx].classList.remove('timing');
+    }
+    toggle.addEventListener('click', () => setPlaying(!playing));
+
+    // Живые цифры в строке меню.
+    const cpuEl = q('[data-cpu]'), ramEl = q('[data-ram]'), bc = q('[data-bar-cpu]'), br = q('[data-bar-ram]');
+    const down = q('[data-down]'), up = q('[data-up]');
+    setInterval(() => {
+      if (!inView) return;
+      const c = 8 + Math.round(Math.random() * 30), r = 52 + Math.round(Math.random() * 6);
+      cpuEl.textContent = String(c); ramEl.textContent = String(r);
+      bc.style.width = `${c}%`; br.style.width = `${r}%`;
+      down.textContent = (1 + Math.random() * 4).toFixed(1); up.textContent = String(120 + Math.round(Math.random() * 400));
+    }, 1300);
+
+    // Не крутим анимацию, пока демо не видно.
+    new IntersectionObserver(([e]) => {
+      const was = inView; inView = e.isIntersecting;
+      if (inView && !was && playing) show(idx, true);
+      if (!inView) token++;
+    }, { threshold: 0.25 }).observe(stage);
+
+    cur.style.left = '70%'; cur.style.top = '60%';
+    reset();
+    items[0].classList.add('active'); items[0].setAttribute('aria-selected', 'true');
+    if (reduce) { root.classList.add('paused'); toggle.setAttribute('aria-label', toggle.dataset.play!); }
+  }
+</script>
+
+<style>
+  .demo-sec { padding: 96px 0 40px; }
+  .eyebrow { margin: 0 0 8px; font-size: 15px; font-weight: 600; color: var(--accent); }
+  .demo { margin-top: 36px; display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+
+  /* ——— сцена ——— */
+  .stage { position: relative; aspect-ratio: 16 / 10.4; border-radius: 18px; overflow: hidden; container-type: inline-size;
+    background: radial-gradient(120% 90% at 20% 10%, #6b4fd8 0%, transparent 55%), radial-gradient(90% 80% at 90% 90%, #c2417f 0%, transparent 60%), #241b46;
+    box-shadow: 0 0 0 1px var(--line), 0 30px 70px -30px rgb(40 20 90 / .45); font: 1.35cqw/1.3 -apple-system, BlinkMacSystemFont, "Inter", sans-serif; user-select: none; }
+  .stage *, .stage { transition-timing-function: cubic-bezier(.2, .8, .2, 1); }
+  .stage.instant *, .stage.rm * { transition-duration: 0s !important; transition-delay: 0s !important; }
+
+  .mb { position: absolute; inset: 0 0 auto; height: 5.4%; display: flex; align-items: center; gap: 2.1cqw; padding: 0 1.6cqw;
+    background: rgb(255 255 255 / .2); backdrop-filter: blur(16px); color: #fff; z-index: 6; }
+  .mb b { font-weight: 700; }
+  .mb-dot { width: 1.1cqw; height: 1.1cqw; border-radius: 50%; background: #fff; opacity: .9; }
+  .mb-dim { opacity: .85; }
+  .mb-right { margin-left: auto; display: flex; align-items: center; gap: 1.6cqw; }
+  .mb-stats { font-variant-numeric: tabular-nums; padding: .2cqw .6cqw; border-radius: .5cqw; }
+  .mb-octo { display: inline-flex; color: #fff; }
+  .mb-octo :global(svg) { width: 1.7cqw; height: 1.7cqw; }
+
+  .win { position: absolute; left: 16%; top: 14%; width: 52%; height: 56%; z-index: 3; border-radius: 1.1cqw; overflow: hidden;
+    background: #fbfbfd; box-shadow: 0 2.2cqw 4.5cqw -1.5cqw rgb(0 0 0 / .55), 0 0 0 1px rgb(0 0 0 / .1);
+    transition-property: left, top, width, height, transform, opacity; transition-duration: 450ms; }
+  .win.grab { box-shadow: 0 3.4cqw 6cqw -1.5cqw rgb(0 0 0 / .6), 0 0 0 1px rgb(0 0 0 / .1); }
+  .win-bar { height: 3.4cqw; display: flex; align-items: center; gap: .7cqw; padding: 0 1.1cqw; background: #f0f0f3; border-bottom: 1px solid #e3e3e8; position: relative; }
+  .tl { width: 1.05cqw; height: 1.05cqw; border-radius: 50%; display: inline-block; }
+  .tl.r { background: #ff5f57; } .tl.y { background: #febc2e; } .tl.g { background: #28c840; }
+  .win-title { position: absolute; left: 50%; transform: translateX(-50%); color: #4a4a50; font-weight: 600; }
+  .win-body { position: absolute; inset: 3.4cqw 0 0; overflow: hidden; }
+  .win-scroll { padding: 2cqw 2.4cqw; transition: transform 1300ms cubic-bezier(.22, .9, .25, 1); }
+  .hero-img { height: 9cqw; border-radius: .8cqw; margin-bottom: 1.4cqw; background: linear-gradient(135deg, #d9d2ff, #ffd6e7); }
+  .hero-img.small { height: 6cqw; background: linear-gradient(135deg, #cfe9ff, #e3dcff); margin-top: 1cqw; }
+  .ln { height: .8cqw; border-radius: .4cqw; background: #e4e4ea; margin-bottom: .9cqw; }
+
+  .snapzone { position: absolute; left: 50.4%; top: 6.2%; width: 48.8%; bottom: 17%; z-index: 2; border-radius: 1.1cqw;
+    background: rgb(255 255 255 / .18); border: 2px solid rgb(255 255 255 / .55); opacity: 0; transform: scale(.96); transition: opacity .25s, transform .25s; }
+  .snapzone.on { opacity: 1; transform: none; }
+
+  .panel { position: absolute; right: 9%; top: 6.2%; width: 25%; z-index: 7; padding: 1.2cqw; border-radius: 1cqw; color: #1d1d1f;
+    background: rgb(250 250 252 / .94); backdrop-filter: blur(20px); box-shadow: 0 1.6cqw 3.6cqw -1cqw rgb(0 0 0 / .45);
+    opacity: 0; transform: translateY(-.8cqw); transition: opacity .25s, transform .25s; pointer-events: none; }
+  .panel.on { opacity: 1; transform: none; }
+  .p-row { display: grid; grid-template-columns: 3.4cqw 1fr; align-items: center; gap: .8cqw; margin-bottom: .9cqw; font-weight: 600; }
+  .bar { height: .9cqw; border-radius: .45cqw; background: #e6e6ec; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 20%; border-radius: inherit; background: #7a3ff2; transition: width .9s; }
+  .bar.mem i { background: #e0468a; width: 55%; }
+  .p-row.net { grid-template-columns: 1fr 1fr; font-weight: 500; color: #4a4a50; font-variant-numeric: tabular-nums; }
+  .p-procs { display: flex; justify-content: space-between; padding-top: .6cqw; border-top: 1px solid #e6e6ec; margin-top: .4cqw; color: #4a4a50; }
+
+  .sheet { position: absolute; left: 50%; top: 50%; width: 34%; z-index: 7; padding: 1.6cqw; border-radius: 1.3cqw; color: #1d1d1f;
+    background: rgb(250 250 252 / .97); box-shadow: 0 2cqw 5cqw -1cqw rgb(0 0 0 / .55);
+    transform: translate(-50%, -46%) scale(.96); opacity: 0; transition: opacity .3s, transform .3s; }
+  .sheet.on { opacity: 1; transform: translate(-50%, -50%); }
+  .sheet-title { display: block; margin-bottom: 1cqw; font-size: 1.5cqw; }
+  .s-row { display: flex; align-items: center; gap: .8cqw; padding: .6cqw 0; border-bottom: 1px solid #ececf1;
+    transition: transform .6s cubic-bezier(.5, 0, .7, .4), opacity .6s; }
+  .s-row em { margin-left: auto; font-style: normal; color: #6e6e73; font-variant-numeric: tabular-nums; }
+  .ck { width: 1.5cqw; height: 1.5cqw; border-radius: 50%; display: grid; place-items: center; font-size: 1cqw; color: #fff; background: #d6d6dd; transition: background .2s; }
+  .s-row.ok .ck { background: #7a3ff2; }
+  .s-ico { width: 2cqw; height: 2cqw; border-radius: .5cqw; }
+  .s-ico.shop { background: linear-gradient(135deg, #ff9f43, #ff6b3d); }
+  .s-ico.file { background: #dcdce3; }
+  .s-btn { display: block; margin-top: 1.2cqw; text-align: center; padding: .8cqw; border-radius: .7cqw; background: #7a3ff2; color: #fff; font-weight: 600; }
+
+  .shot-dim { position: absolute; inset: 0; z-index: 8; background: rgb(0 0 0 / .38); opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .shot-dim.on { opacity: 1; }
+  .shot-sel { position: absolute; z-index: 9; border: 2px solid #fff; box-shadow: 0 0 0 1px rgb(0 0 0 / .25); opacity: 0; transition: width .7s, height .7s, opacity .2s;
+    background: rgb(255 255 255 / .06); }
+  .shot-sel.on { opacity: 1; }
+  .shot-arrow { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .shot-arrow path { fill: none; stroke: #ff3b6b; stroke-width: 2.4; stroke-linecap: round; vector-effect: non-scaling-stroke;
+    stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset .8s; }
+  .shot-sel.draw .shot-arrow path { stroke-dashoffset: 0; }
+  .shot-tools { position: absolute; left: calc(100% + .8cqw); top: 0; display: grid; gap: .5cqw; padding: .6cqw; border-radius: .9cqw;
+    background: rgb(30 30 34 / .9); opacity: 0; transform: translateX(-.6cqw); transition: opacity .25s, transform .25s; }
+  .shot-sel.tools .shot-tools { opacity: 1; transform: none; }
+  .shot-tools i { width: 2cqw; height: 2cqw; border-radius: .5cqw; background: rgb(255 255 255 / .18); }
+  .shot-tools i.on { background: #7a3ff2; }
+
+  .pill, .toast, .wheel { position: absolute; left: 50%; z-index: 10; transform: translate(-50%, -.6cqw); opacity: 0; transition: opacity .25s, transform .25s;
+    padding: .7cqw 1.4cqw; border-radius: 99px; background: rgb(28 28 32 / .88); color: #fff; font-weight: 600; white-space: nowrap; backdrop-filter: blur(10px); }
+  .pill { top: 10%; font-size: 2cqw; letter-spacing: .1em; }
+  .toast { top: 10%; }
+  .wheel { top: 78%; display: flex; align-items: center; gap: .8cqw; }
+  .pill.on, .toast.on, .wheel.on { opacity: 1; transform: translate(-50%, 0); }
+  .w-mouse { width: 1.4cqw; height: 2.2cqw; border: 2px solid #fff; border-radius: 1cqw; position: relative; }
+  .w-mouse i { position: absolute; left: 50%; top: 18%; width: 2px; height: 26%; margin-left: -1px; background: #fff; border-radius: 2px; animation: wheel 0.8s infinite; }
+  @keyframes wheel { from { transform: translateY(0); opacity: 1; } to { transform: translateY(60%); opacity: .2; } }
+
+  .dock { position: absolute; left: 50%; bottom: 2.4%; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: 1cqw;
+    padding: .9cqw 1.1cqw; border-radius: 1.8cqw; background: rgb(255 255 255 / .22); backdrop-filter: blur(16px); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .25); }
+  .di { width: 4.6cqw; height: 4.6cqw; border-radius: 1.1cqw; position: relative; transition: width .4s, opacity .4s, margin .4s; }
+  .di.run::after { content: ''; position: absolute; left: 50%; bottom: -.75cqw; width: .45cqw; height: .45cqw; margin-left: -.225cqw; border-radius: 50%; background: #fff; transition: opacity .3s; }
+  .di.c1 { background: linear-gradient(160deg, #6fc3ff, #2f7bf6); }
+  .di.c2 { background: linear-gradient(160deg, #ffe27a, #f7b500); }
+  .di.c3 { background: linear-gradient(160deg, #8ef0b0, #20b866); }
+  .di.c4 { background: linear-gradient(160deg, #ffb26b, #ff6b3d); }
+  .di.c5 { background: linear-gradient(160deg, #ff8fc0, #c94ce0); }
+  .di.gone { width: 0; opacity: 0; margin: 0 -.5cqw; }
+  .dsep { width: 1px; height: 4cqw; background: rgb(255 255 255 / .35); }
+  .di.trash { background: linear-gradient(160deg, #f3f3f6, #c9c9d2); }
+  .di.trash i { position: absolute; inset: 22% 26% 18%; border-radius: .3cqw .3cqw .8cqw .8cqw; border: 2px solid #8a8a94; border-top-width: 3px; }
+  .di.trash.full i { background: repeating-linear-gradient(0deg, #fff 0 3px, #d0d0da 3px 5px); }
+
+  .cur { position: absolute; z-index: 12; width: 2.4cqw; height: 2.4cqw; margin: -.2cqw 0 0 -.5cqw; fill: #111; stroke: #fff; stroke-width: 1.4;
+    filter: drop-shadow(0 .2cqw .3cqw rgb(0 0 0 / .4)); transition-property: left, top; transition-duration: 700ms; }
+  .cur.click { animation: click .35s; }
+  @keyframes click { 40% { transform: scale(.78); } }
+
+  /* ——— список функций ——— */
+  .list { display: grid; gap: 4px; position: relative; }
+  .item { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start;
+    padding: 10px 12px; border-radius: 12px; position: relative; overflow: hidden; transition: background .2s; }
+  .item:hover { background: var(--fill); }
+  .item:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+  .item .ico { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: var(--muted); background: var(--fill); transition: color .2s, background .2s; }
+  .item .ico :global(svg) { width: 19px; height: 19px; }
+  .item b { display: block; font-size: 15px; font-weight: 600; line-height: 34px; color: var(--muted); transition: color .2s; }
+  .item .desc { display: block; max-height: 0; overflow: hidden; font-size: 14px; color: var(--muted); transition: max-height .35s; }
+  .item.active { background: var(--fill); }
+  .item.active b { color: var(--fg); line-height: 1.4; padding-top: 7px; }
+  .item.active .ico { color: #fff; background: var(--accent); }
+  .item.active .desc { max-height: 80px; margin-top: 2px; }
+  .prog { position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px; }
+  .prog i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 2px; }
+  .item.timing .prog i { animation: prog var(--dur, 4s) linear forwards; }
+  @keyframes prog { to { width: 100%; } }
+  .playpause { all: unset; cursor: pointer; justify-self: start; margin: 6px 0 0 12px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--fill); color: var(--fg); }
+  .playpause:focus-visible { outline: 3px solid var(--accent); }
+  .playpause svg { width: 14px; height: 14px; fill: currentColor; }
+  .i-play { display: none; }
+  .demo.paused .i-play { display: block; } .demo.paused .i-pause { display: none; }
+
+  @media (max-width: 900px) {
+    .demo { grid-template-columns: 1fr; }
+    .list { grid-auto-flow: column; grid-auto-columns: minmax(220px, 72%); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; }
+    .item { scroll-snap-align: start; }
+    .item .desc { max-height: none; }
+    .item b { line-height: 1.4; padding-top: 7px; }
+    .playpause { position: absolute; display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .item .desc, .item, .item .ico { transition: none; } }
+</style>

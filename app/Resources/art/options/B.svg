@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ee0c8"/><stop offset="1" stop-color="#2b6bf0"/></linearGradient>
+    <linearGradient id="hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.22"/><stop offset="0.55" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#hl)"/>
+  <g transform="translate(512 230)" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-210 330 C -235 290 -245 255 -245 215 C -245 85 -140 5 0 5 C 140 5 245 85 245 215 C 245 255 235 290 210 330 C 160 350 120 330 70 345 C 25 358 -25 358 -70 345 C -120 330 -160 350 -210 330 Z"/>
+    <path d="M-210 330 C -240 420 -305 450 -335 410 C -355 380 -325 350 -300 370"/>
+    <path d="M-70 350 C -75 455 -120 525 -170 530 C -205 533 -210 490 -180 485"/>
+    <path d="M70 350 C 75 455 120 525 170 530 C 205 533 210 490 180 485"/>
+    <path d="M210 330 C 240 420 305 450 335 410 C 355 380 325 350 300 370"/>
+  </g>
+</svg>

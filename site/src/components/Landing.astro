@@ -1,0 +1,244 @@
+---
+import Octopus from './Octopus.astro';
+import Demo from './Demo.astro';
+import { dict, languages, pathFor, INSTALL_CMD, DOWNLOAD_URL, GITHUB_URL, type Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = dict[lang];
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://tentakit.com';
+const canonical = site + pathFor(lang);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Tentakit',
+  operatingSystem: 'macOS 13+',
+  applicationCategory: 'UtilitiesApplication',
+  description: t.meta.description,
+  url: canonical,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{t.meta.title}</title>
+  <meta name="description" content={t.meta.description} />
+  <link rel="canonical" href={canonical} />
+  {Object.keys(languages).map((l) => <link rel="alternate" hreflang={l} href={site + pathFor(l as Lang)} />)}
+  <link rel="alternate" hreflang="x-default" href={site + '/'} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={t.meta.title} />
+  <meta property="og:description" content={t.meta.description} />
+  <meta property="og:url" content={canonical} />
+  <meta name="color-scheme" content="light dark" />
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href={pathFor(lang)}><Octopus size={26} tile /> Tentakit</a>
+      <nav class="links" aria-label="Main">
+        <a href="#features">{t.nav.features}</a>
+        <a href="#install">{t.nav.install}</a>
+        <a href="#faq">{t.nav.faq}</a>
+      </nav>
+      <div class="langs" aria-label="Language">
+        {(Object.keys(languages) as Lang[]).map((l) => (
+          <a href={pathFor(l)} class:list={[{ on: l === lang }]} hreflang={l} aria-current={l === lang ? 'page' : undefined}>{l.toUpperCase()}</a>
+        ))}
+      </div>
+      <a class="btn small" href={DOWNLOAD_URL}>{t.hero.download}</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap">
+      <img class="app-icon" src="/favicon.svg" width="112" height="112" alt="" />
+      <p class="badge">{t.hero.badge}</p>
+      <h1>{t.hero.title} <span class="soft">{t.hero.titleAccent}</span></h1>
+      <p class="lead">{t.hero.lead}</p>
+      <div class="cta">
+        <a class="btn" href={DOWNLOAD_URL}>{t.hero.download}</a>
+        {GITHUB_URL && <a class="btn ghost" href={GITHUB_URL}>{t.nav.github}</a>}
+      </div>
+      <div class="cmd" data-copy={INSTALL_CMD}>
+        <code><span class="prompt" aria-hidden="true">$</span> {INSTALL_CMD}</code>
+        <button type="button" class="copy" data-label={t.hero.copy} data-done={t.hero.copied}>{t.hero.copy}</button>
+      </div>
+      <p class="fine">{t.hero.req}</p>
+    </section>
+
+    <Demo lang={lang} />
+
+    <section class="wrap section">
+      <h2 class="center">{t.why.title}</h2>
+      <div class="why">
+        {t.why.points.map((p) => <div><h3>{p.title}</h3><p>{p.text}</p></div>)}
+      </div>
+    </section>
+
+    <section id="install" class="wrap section">
+      <h2 class="center">{t.install.title}</h2>
+      <p class="sub center">{t.install.lead}</p>
+      <div class="install">
+        <div class="card">
+          <span class="tag">1</span>
+          <h3>{t.install.cmdTitle}</h3>
+          <p>{t.install.cmdText}</p>
+          <div class="cmd" data-copy={INSTALL_CMD}>
+            <code><span class="prompt" aria-hidden="true">$</span> {INSTALL_CMD}</code>
+            <button type="button" class="copy" data-label={t.hero.copy} data-done={t.hero.copied}>{t.hero.copy}</button>
+          </div>
+        </div>
+        <div class="card">
+          <span class="tag">2</span>
+          <h3>{t.install.zipTitle}</h3>
+          <p>{t.install.zipText}</p>
+          <a class="btn ghost" href={DOWNLOAD_URL}>{t.hero.download}</a>
+        </div>
+      </div>
+      <div class="perms">
+        <h3>{t.install.permsTitle}</h3>
+        <ul>{t.install.perms.map((p) => <li>{p}</li>)}</ul>
+      </div>
+    </section>
+
+    <section id="faq" class="wrap section faq">
+      <h2 class="center">{t.faq.title}</h2>
+      <div class="faq-list">
+        {t.faq.items.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <span class="brand small"><Octopus size={20} tile /> Tentakit</span>
+      <span>{t.footer.made} {t.footer.free}</span>
+      <span>© {new Date().getFullYear()}</span>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.copy').forEach((b) => {
+      b.addEventListener('click', async () => {
+        const text = b.closest<HTMLElement>('.cmd')?.dataset.copy ?? '';
+        try { await navigator.clipboard.writeText(text); } catch { return; }
+        b.textContent = b.dataset.done ?? 'OK';
+        setTimeout(() => (b.textContent = b.dataset.label ?? 'Copy'), 1600);
+      });
+    });
+  </script>
+</body>
+</html>
+
+<style is:global>
+  /* Цвета: светлая и тёмная тема. Контраст текста: fg 16.8:1, muted 5.1:1, accent 5.5:1 (светлая);
+     fg 19.3:1, muted 8.2:1, accent 8.1:1 (тёмная). */
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f7; --fill: #f2f2f5; --fg: #1d1d1f; --muted: #6e6e73; --line: #e5e5ea;
+    --accent: #7a3ff2; --on-accent: #ffffff; --code: #1d1d1f; --codefg: #f5f5f7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000; --bg2: #161618; --fill: #1c1c1f; --fg: #f5f5f7; --muted: #a1a1a6; --line: #2a2a2e;
+      --accent: #b18cff; --on-accent: #000000; --code: #161618; --codefg: #f5f5f7;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased;
+    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  .skip { position: absolute; left: -999px; top: 8px; background: var(--accent); color: var(--on-accent); padding: 8px 12px; border-radius: 8px; z-index: 50; }
+  .skip:focus { left: 8px; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .nav { position: sticky; top: 0; z-index: 20; backdrop-filter: saturate(180%) blur(20px);
+    background: color-mix(in srgb, var(--bg) 80%, transparent); border-bottom: 1px solid var(--line); }
+  .nav-in { display: flex; align-items: center; gap: 22px; height: 56px; }
+  .brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; text-decoration: none; letter-spacing: -.01em; }
+  .brand.small { font-size: 15px; }
+  .links { display: flex; gap: 22px; margin-left: auto; }
+  .links a { text-decoration: none; color: var(--muted); font-size: 14px; }
+  .links a:hover { color: var(--fg); }
+  .langs { display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: var(--fill); }
+  .langs a { text-decoration: none; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 999px; color: var(--muted); }
+  .langs a.on { background: var(--bg); color: var(--fg); box-shadow: 0 1px 2px rgb(0 0 0 / .12); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 22px; border-radius: 999px;
+    background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 16px; text-decoration: none; transition: filter .15s, transform .15s; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:active { transform: scale(.98); }
+  .btn.small { min-height: 32px; padding: 0 14px; font-size: 13px; }
+  .btn.ghost { background: var(--fill); color: var(--fg); }
+
+  .hero { text-align: center; padding: 72px 20px 24px; }
+  .app-icon { width: 112px; height: 112px; display: block; margin: 0 auto 18px; filter: drop-shadow(0 14px 24px rgb(122 63 242 / .28)); }
+  .badge { display: inline-block; margin: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+  h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.04; letter-spacing: -.035em; margin: 10px auto 18px; max-width: 900px; font-weight: 700; }
+  h1 .soft { display: block; color: var(--muted); }
+  .lead { font-size: clamp(18px, 2.2vw, 21px); color: var(--muted); max-width: 680px; margin: 0 auto 30px; }
+  .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+
+  .cmd { display: flex; align-items: center; gap: 10px; max-width: 520px; margin: 0 auto; background: var(--code); color: var(--codefg);
+    border-radius: 14px; padding: 8px 8px 8px 16px; text-align: left; }
+  .cmd code { flex: 1; overflow-x: auto; white-space: nowrap; font: 14px/1.5 ui-monospace, "SF Mono", Menlo, monospace; scrollbar-width: none; }
+  .prompt { color: #b18cff; margin-right: 4px; user-select: none; }
+  .copy { flex: none; min-height: 32px; font: 600 13px/1 inherit; color: #fff; background: rgb(255 255 255 / .14); border: 0; border-radius: 9px; padding: 0 12px; cursor: pointer; }
+  .copy:hover { background: rgb(255 255 255 / .22); }
+  .fine { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+
+  .section { padding-top: 96px; }
+  h2 { font-size: clamp(30px, 4.4vw, 48px); line-height: 1.1; letter-spacing: -.03em; margin: 0 0 12px; font-weight: 700; }
+  .center { text-align: center; margin-left: auto; margin-right: auto; }
+  .sub { color: var(--muted); font-size: 19px; max-width: 640px; margin: 0 0 8px; }
+
+  .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
+  .why > div { padding: 26px; border-radius: 20px; background: var(--bg2); }
+  .why h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.01em; }
+  .why p { margin: 0; color: var(--muted); font-size: 16px; }
+
+  .install { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 36px; }
+  .card { padding: 28px; border-radius: 20px; background: var(--bg2); display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .card h3 { margin: 0; font-size: 21px; letter-spacing: -.01em; }
+  .card p { margin: 0; color: var(--muted); font-size: 16px; }
+  .card .cmd { margin: 4px 0 0; width: 100%; }
+  .tag { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 700; background: var(--accent); color: var(--on-accent); }
+  .perms { margin-top: 16px; padding: 22px 28px; border-radius: 20px; border: 1px solid var(--line); }
+  .perms h3 { margin: 0 0 8px; font-size: 17px; }
+  .perms ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 16px; }
+
+  .faq-list { max-width: 760px; margin: 28px auto 0; }
+  .faq details { border-bottom: 1px solid var(--line); padding: 18px 2px; }
+  .faq summary { cursor: pointer; font-weight: 600; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::after { content: '+'; color: var(--muted); font-size: 24px; line-height: 1; font-weight: 400; }
+  .faq details[open] summary::after { content: '−'; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq p { color: var(--muted); margin: 10px 0 0; font-size: 16px; }
+
+  .foot { margin-top: 96px; border-top: 1px solid var(--line); padding: 26px 0; color: var(--muted); font-size: 13px; }
+  .foot-in { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .foot .brand { color: var(--fg); }
+
+  @media (max-width: 760px) {
+    .links { display: none; }
+    .langs { margin-left: auto; }
+    .nav .btn.small { display: none; }
+    .hero { padding-top: 44px; }
+    .why, .install { grid-template-columns: 1fr; }
+    .section { padding-top: 72px; }
+  }
+</style>

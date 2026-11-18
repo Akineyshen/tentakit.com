@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-256 -256 512 512">
+  <circle r="62" fill="#000"/>
+  <path transform="rotate(0)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+  <path transform="rotate(45)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+  <path transform="rotate(90)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+  <path transform="rotate(135)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+  <path transform="rotate(180)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+  <path transform="rotate(225)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+  <path transform="rotate(270)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+  <path transform="rotate(315)" d="M 0 -96 C 46 -138 46 -196 0 -212 C -30 -222 -46 -194 -26 -182" fill="none" stroke="#000" stroke-width="30" stroke-linecap="round"/>
+</svg>

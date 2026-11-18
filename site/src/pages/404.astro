@@ -1,0 +1,26 @@
+---
+import Octopus from '../components/Octopus.astro';
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page not found — Tentakit</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="robots" content="noindex" />
+</head>
+<body>
+  <main>
+    <Octopus size={64} tile />
+    <h1>This page swam away.</h1>
+    <p><a href="/">Back to Tentakit</a></p>
+  </main>
+</body>
+</html>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; text-align: center; color: #1d1d1f; background: #fff;
+    font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
+  h1 { font-size: 32px; letter-spacing: -.02em; margin: 18px 0 6px; }
+  a { color: #7a3ff2; }
+  @media (prefers-color-scheme: dark) { body { color: #f5f5f7; background: #000; } a { color: #b18cff; } }
+</style>

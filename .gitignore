@@ -1,0 +1,14 @@
+# macOS / редакторы
+.DS_Store
+.idea/
+.vscode/
+
+# сборка программы (готовый zip для сайта лежит в site/public/download)
+app/build/
+
+# сайт
+site/node_modules/
+site/dist/
+site/.astro/
+site/.wrangler/
+.claude/
